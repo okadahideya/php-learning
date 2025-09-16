@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    executionOrder="depends,defects"
+    beStrictAboutOutputDuringTests="true"
+    beStrictAboutTodoAnnotatedTests="true"
+    failOnRisky="true"
+    failOnWarning="true"
+    stopOnFailure="false"
+    cacheDirectory=".phpunit.cache"
+    backupGlobals="false"
+>
+    <!-- テストスイート定義 -->
+    <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Feature">
+            <directory>tests/Feature</directory>
+        </testsuite>
+    </testsuites>
+
+    <!-- コードカバレッジ設定 -->
+    <coverage>
+        <include>
+            <directory>src</directory>
+        </include>
+        <exclude>
+            <file>src/helpers.php</file>
+            <directory>src/Config</directory>
+        </exclude>
+        <report>
+            <html outputDirectory="coverage"/>
+            <text outputFile="coverage.txt"/>
+            <clover outputFile="coverage.xml"/>
+        </report>
+    </coverage>
+
+    <!-- ログ出力設定 -->
+    <logging>
+        <junit outputFile="junit.xml"/>
+    </logging>
+
+    <!-- PHP設定 -->
+    <php>
+        <!-- 環境変数 -->
+        <env name="APP_ENV" value="testing"/>
+        <env name="DB_CONNECTION" value="memory"/>
+        <env name="CACHE_DRIVER" value="array"/>
+        
+        <!-- PHP.ini設定 -->
+        <ini name="error_reporting" value="-1"/>
+        <ini name="memory_limit" value="512M"/>
+        <ini name="display_errors" value="1"/>
+        <ini name="display_startup_errors" value="1"/>
+    </php>
+
+    <!-- Extension設定 -->
+    <extensions>
+        <!-- PHPUnitの拡張機能を使う場合 -->
+    </extensions>
+</phpunit>

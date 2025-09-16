@@ -1,190 +1,201 @@
-# PHP学習教材
+# 完全PHP学習ロードマップ
 
-未経験エンジニア向けのPHP基礎学習教材です。実践的なコードで段階的にPHPの基本を学習できます。
+未経験から実務レベルまで！段階的にPHP開発の全てを学習できる完全教材パッケージです。
 
-## 学習の流れ
+## 📚 学習の全体像
 
-以下の順番で学習することをおすすめします：
+### 🌱 **STEP 1: PHP基礎習得** (`PHP/` ディレクトリ)
+プログラミングの基本からPHPの実用的な機能まで
 
-1. **lesson01_variables** - 変数の基本
-2. **lesson02_arrays** - 配列の基本
-3. **lesson03_loops** - ループ処理
-4. **lesson04_functions** - 関数の基本
-5. **lesson05_classes** - クラスとオブジェクト指向（ファイル分割）
-6. **lesson06_file_handling** - ファイル操作
-7. **lesson07_form_handling** - フォーム処理（GET/POST）
-8. **lesson08_sessions_cookies** - セッション・クッキー管理
-9. **lesson09_database** - データベース操作（PDO）
-10. **lesson10_error_handling** - エラーハンドリング
-
-## 実行方法
-
-### 基本レッスン（lesson01～04, lesson06, lesson09～10）
-ターミナルで以下のコマンドを実行：
-
-```bash
-# レッスンディレクトリに移動
-cd lesson01_variables
-
-# sample.phpを実行（見本コード）
-php sample.php
-
-# practice.phpを実行（課題実装後）
-php practice.php
-```
-
-### Webサーバーが必要なレッスン（lesson05, lesson07～08）
-PHP内蔵サーバーを起動してブラウザで確認：
-
-```bash
-# レッスンディレクトリに移動
-cd lesson07_form_handling
-
-# PHP内蔵サーバーを起動
-php -S localhost:8000
-
-# ブラウザで以下にアクセス
-# http://localhost:8000/sample.php
-# http://localhost:8000/practice.php
-
-# 停止する場合は Ctrl+C
-```
-
-## 各レッスンの構成
-
-各レッスンディレクトリには以下のファイルがあります：
-
-- **sample.php** - 見本コード（動作確認・学習用）
-- **practice.php** - 課題用ファイル（実装練習用）
-- **README.md** - 学習目標・基本概念・課題説明
-
-## 学習のポイント
-
-### ステップ1: sample.phpで理解
-まず見本コードを実行して、どのように動作するかを確認しましょう。
-
-```bash
-php sample.php
-```
-
-### ステップ2: practice.phpで実装
-コメントの指示に従って、自分でコードを実装してみましょう。
-
-### ステップ3: 動作確認
-実装後に実行して、期待通りに動作するか確認しましょう。
-
-```bash
-php practice.php
-```
-
-## 学習内容の要点
-
-### 基礎編（lesson01～05）
-- **変数**: PHPの基本的なデータ型と操作
-- **配列**: インデックス配列と連想配列の使い分け
-- **ループ**: for文、while文、foreach文の実用パターン
-- **関数**: 再利用可能なコードの書き方
-- **クラス**: オブジェクト指向の基本とファイル分割
-
-### 実用編（lesson06～10）
-- **ファイル操作**: テキスト、CSV、JSONファイルの読み書き
-- **フォーム処理**: Webフォームとセキュリティ対策
-- **セッション管理**: ログイン状態やカート機能
-- **データベース**: SQLiteを使ったCRUD操作
-- **エラー処理**: 堅牢なアプリケーション作成
-
-## 重要なセキュリティポイント
-
-### XSS対策
-```php
-// 出力時は必ずエスケープ
-echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');
-```
-
-### CSRF対策
-```php
-// フォームにトークンを設置
-<input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
-
-// 送信時に検証
-if ($_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-    die('不正なリクエスト');
-}
-```
-
-### SQLインジェクション対策
-```php
-// プリペアドステートメントを使用
-$stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
-$stmt->execute([$user_id]);
-```
-
-## トラブルシューティング
-
-### よくあるエラーと対処法
-
-#### 「php: command not found」
-PHPがインストールされていません。
-
-**macOS (Homebrew):**
-```bash
-brew install php
-```
-
-**Windows:**
-[XAMPP](https://www.apachefriends.org/) をインストール
-
-**Ubuntu/Linux:**
-```bash
-sudo apt update
-sudo apt install php php-cli
-```
-
-#### ブラウザで表示されない
-Webサーバーが起動していない可能性があります。
-
-```bash
-# PHP内蔵サーバーを起動
-php -S localhost:8000
-
-# ブラウザで http://localhost:8000 にアクセス
-```
-
-#### データベースエラー
-SQLite拡張が有効になっているか確認：
-
-```bash
-php -m | grep sqlite
-```
-
-表示されない場合は、php.iniで以下を有効化：
-```ini
-extension=sqlite3
-extension=pdo_sqlite
-```
-
-## 推奨環境
-
-- **PHP**: 7.4以上（8.0以上推奨）
-- **OS**: Windows, macOS, Linux
-- **エディタ**: VSCode, PhpStorm, Sublime Text など
-- **ブラウザ**: Chrome, Firefox, Safari など（モダンブラウザ）
-
-## 次のステップ
-
-この教材を完了したら、以下の学習をおすすめします：
-
-1. **フレームワーク**: Laravel, Symfony
-2. **フロントエンド**: HTML/CSS/JavaScript
-3. **データベース**: MySQL, PostgreSQL
-4. **開発環境**: Docker, Git
-5. **テスト**: PHPUnit
-
-## サポート
-
-各レッスンのREADME.mdに詳しい説明があります。
-わからないことがあれば、まず該当レッスンのREADME.mdを確認してください。
+### 🚀 **STEP 2: 実践技術習得** (`next**/` ディレクトリ)
+現場で求められる技術スタックを完全習得
 
 ---
 
-**Happy Coding! 🚀**
+## 🌱 STEP 1: PHP基礎学習
+
+**目標**: プログラミングの基本とPHPの核心機能をマスター  
+**期間**: 40-60時間  
+**場所**: [`PHP/`](PHP/) ディレクトリ
+
+### 学習内容
+1. **lesson01_variables** - 変数・データ型
+2. **lesson02_arrays** - 配列操作
+3. **lesson03_loops** - ループ処理
+4. **lesson04_functions** - 関数定義
+5. **lesson05_classes** - オブジェクト指向（ファイル分割）
+6. **lesson06_file_handling** - ファイル操作
+7. **lesson07_form_handling** - フォーム処理・セキュリティ
+8. **lesson08_sessions_cookies** - セッション管理
+9. **lesson09_database** - データベース操作（SQLite）
+10. **lesson10_error_handling** - エラー処理
+
+### 実行方法
+```bash
+# PHP基礎学習開始
+cd PHP/lesson01_variables
+php sample.php    # 見本確認
+php practice.php  # 課題実装
+```
+
+---
+
+## 🚀 STEP 2: 実践技術学習
+
+**目標**: 実務で即戦力となる技術スタックを完全習得  
+**期間**: 80-110時間  
+**到達レベル**: **実務対応可能**
+
+### 🎯 Advanced Learning Path
+
+#### **next01_laravel_basics/** - Laravelフレームワーク
+- **学習時間**: 20-30時間
+- **内容**: MVC・ルーティング・Eloquent・CRUD アプリ
+- **成果物**: 実用的なWebアプリケーション
+
+#### **next02_frontend_basics/** - フロントエンド連携  
+- **学習時間**: 15-20時間
+- **内容**: HTML/CSS/JavaScript・Ajax・DOM操作
+- **成果物**: インタラクティブなUI
+
+#### **next03_mysql_basics/** - MySQL実用
+- **学習時間**: 10-15時間  
+- **内容**: 高度なSQL・テーブル設計・パフォーマンス最適化
+- **成果物**: 効率的なデータベース設計
+
+#### **next04_docker_git/** - 開発環境構築
+- **学習時間**: 15-20時間
+- **内容**: Docker・Git・チーム開発・CI/CD基礎  
+- **成果物**: プロ仕様の開発環境
+
+#### **next05_testing_phpunit/** - テスト駆動開発
+- **学習時間**: 20-25時間
+- **内容**: PHPUnit・TDD・品質保証・自動テスト
+- **成果物**: テスト可能な高品質コード
+
+### 実行方法
+```bash
+# 実践技術学習開始
+cd next01_laravel_basics
+cat README.md              # 学習ガイド確認
+cd resources && cat setup.md  # 環境構築手順
+```
+
+---
+
+## 📊 学習効果・キャリア影響
+
+### スキル到達レベル
+| 段階 | 期間 | 到達レベル | 就職・転職への影響 |
+|------|------|-----------|------------------|
+| **PHP基礎** | 40-60時間 | プログラミング基礎 | 学習継続の意思表示 |
+| **実践技術** | 80-110時間 | **実務レベル** | **即戦力として評価** |
+| **合計** | **120-170時間** | **プロフェッショナル** | **自信を持って応募可能** |
+
+### 習得できる技術スタック
+- ✅ **Backend**: PHP 8+ / Laravel / MySQL
+- ✅ **Frontend**: HTML5 / CSS3 / JavaScript (ES6+)
+- ✅ **DevOps**: Docker / Git / CI/CD
+- ✅ **Quality**: PHPUnit / TDD / Code Quality
+- ✅ **Security**: XSS・CSRF・SQLインジェクション対策
+
+---
+
+## 🎯 各段階での成果物
+
+### PHP基礎完了時
+- シンプルなCRUDアプリケーション
+- セキュアなフォーム処理
+- データベース連携システム
+
+### 実践技術完了時
+- **Laravel ベースの本格的なWebアプリ**
+- **リアルタイム通信機能**
+- **Docker化された開発環境**
+- **テスト駆動で開発されたコード**
+- **チーム開発対応のGit管理**
+
+---
+
+## 🚀 Quick Start
+
+### 初学者の方
+```bash
+# まずはPHP基礎から開始
+cd PHP/
+cat README.md
+cd lesson01_variables/
+php sample.php
+```
+
+### PHP経験者の方
+```bash
+# 実践技術から開始可能
+cd next01_laravel_basics/
+cat README.md
+cd resources/
+cat setup.md
+```
+
+---
+
+## 📂 ディレクトリ構成
+
+```
+php-learning/
+├── PHP/                    # 基礎学習（lesson01-10）
+│   ├── README.md          # 基礎学習ガイド
+│   ├── lesson01_variables/
+│   ├── lesson02_arrays/
+│   └── ...
+├── next01_laravel_basics/  # Laravel実践
+├── next02_frontend_basics/ # フロントエンド
+├── next03_mysql_basics/    # MySQL実用
+├── next04_docker_git/      # 開発環境
+├── next05_testing_phpunit/ # テスト・TDD
+├── tasks/                  # プロジェクト管理
+├── CLAUDE.md              # 教材作成ルール
+└── README.md              # このファイル
+```
+
+---
+
+## 💡 学習のポイント
+
+### 効果的な学習法
+1. **理解 → 実装 → 応用** の3ステップ
+2. **毎日少しずつ** 継続学習
+3. **手を動かす** ことを重視
+4. **エラーを恐れない** 試行錯誤
+
+### サポート体制
+- 各ディレクトリに **詳細な README.md**
+- **実行可能なサンプルコード**
+- **段階的な課題設計**
+- **トラブルシューティング** 完備
+
+---
+
+## 🎊 最終目標
+
+この学習パッケージを完了すると：
+
+### 技術面
+- **Laravel**で効率的なWeb開発
+- **フロントエンド**技術との連携
+- **データベース**の最適設計
+- **Docker**による環境構築
+- **Git**でのチーム開発
+- **テスト**による品質保証
+
+### キャリア面
+- **実務未経験でも自信を持って応募**
+- **技術面接での具体的なアピール**
+- **入社後の即戦力として期待**
+- **継続学習の基盤構築**
+
+---
+
+**未経験から実務レベルへ！あなたのエンジニア人生をスタートしましょう！**
+
+**Happy Coding! 🚀✨**

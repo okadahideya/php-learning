@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>フロントエンド基礎 - タスク管理システム</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .priority-high { @apply border-l-4 border-red-500; }
+        .priority-medium { @apply border-l-4 border-yellow-500; }
+        .priority-low { @apply border-l-4 border-green-500; }
+        
+        .status-todo { @apply bg-gray-100; }
+        .status-in_progress { @apply bg-blue-100; }
+        .status-completed { @apply bg-green-100; }
+        
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .slide-up { animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            min-width: 300px;
+        }
+        
+        .drag-over {
+            background-color: #e0f2fe !important;
+            border: 2px dashed #0ea5e9 !important;
+        }
+        
+        .task-card {
+            transition: all 0.3s ease;
+            cursor: move;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dark-mode {
+            @apply bg-gray-900 text-white;
+        }
+        
+        .dark-mode .bg-white {
+            @apply bg-gray-800;
+        }
+        
+        .dark-mode .text-gray-900 {
+            @apply text-gray-100;
+        }
+        
+        .dark-mode .border-gray-200 {
+            @apply border-gray-700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-gray-800">
+                        <i class="fas fa-tasks mr-2"></i>TaskManager Frontend Sample
+                    </h1>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="darkModeToggle" class="text-gray-600 hover:text-gray-900 p-2 rounded-md">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <button id="addTaskBtn" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">
+                        <i class="fas fa-plus mr-1"></i>新規作成
+                    </button>
+                    <button id="exportBtn" class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition">
+                        <i class="fas fa-download mr-1"></i>エクスポート
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        <!-- Statistics Dashboard -->
+        <div id="dashboard" class="mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <!-- Stats Cards -->
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-tasks text-2xl text-blue-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">総タスク数</h3>
+                            <p id="totalTasks" class="text-3xl font-bold text-blue-600">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-check-circle text-2xl text-green-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">完了済み</h3>
+                            <p id="completedTasks" class="text-3xl font-bold text-green-600">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-clock text-2xl text-yellow-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">進行中</h3>
+                            <p id="inProgressTasks" class="text-3xl font-bold text-yellow-600">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-chart-pie text-2xl text-purple-500"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-gray-900">完了率</h3>
+                            <p id="completionRate" class="text-3xl font-bold text-purple-600">0%</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chart -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">タスク状況</h3>
+                <div class="w-full h-64">
+                    <canvas id="taskChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white p-4 rounded-lg shadow mb-6">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div class="flex items-center space-x-2">
+                    <label for="priorityFilter" class="text-sm font-medium text-gray-700">優先度:</label>
+                    <select id="priorityFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                        <option value="">すべて</option>
+                        <option value="high">高</option>
+                        <option value="medium">中</option>
+                        <option value="low">低</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <label for="statusFilter" class="text-sm font-medium text-gray-700">ステータス:</label>
+                    <select id="statusFilter" class="border border-gray-300 rounded-md px-3 py-1 text-sm">
+                        <option value="">すべて</option>
+                        <option value="todo">やること</option>
+                        <option value="in_progress">進行中</option>
+                        <option value="completed">完了</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center space-x-2">
+                    <label for="searchInput" class="text-sm font-medium text-gray-700">検索:</label>
+                    <input type="text" id="searchInput" placeholder="タスクを検索..." 
+                           class="border border-gray-300 rounded-md px-3 py-1 text-sm w-64">
+                </div>
+                
+                <button id="clearFilters" class="text-sm text-blue-600 hover:text-blue-800">
+                    <i class="fas fa-times mr-1"></i>フィルタクリア
+                </button>
+            </div>
+        </div>
+
+        <!-- Kanban Board -->
+        <div id="kanbanBoard" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- TODO Column -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-circle text-gray-400 mr-2"></i>やること
+                        <span id="todoCount" class="ml-2 bg-gray-100 text-gray-800 text-sm px-2 py-1 rounded-full">0</span>
+                    </h3>
+                </div>
+                <div id="todoColumn" class="p-4 space-y-3 min-h-96 drop-zone" data-status="todo">
+                    <!-- Tasks will be inserted here -->
+                </div>
+            </div>
+
+            <!-- IN PROGRESS Column -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-circle text-blue-400 mr-2"></i>進行中
+                        <span id="inProgressCount" class="ml-2 bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full">0</span>
+                    </h3>
+                </div>
+                <div id="inProgressColumn" class="p-4 space-y-3 min-h-96 drop-zone" data-status="in_progress">
+                    <!-- Tasks will be inserted here -->
+                </div>
+            </div>
+
+            <!-- COMPLETED Column -->
+            <div class="bg-white rounded-lg shadow">
+                <div class="p-4 border-b border-gray-200">
+                    <h3 class="text-lg font-medium text-gray-900 flex items-center">
+                        <i class="fas fa-circle text-green-400 mr-2"></i>完了
+                        <span id="completedCount" class="ml-2 bg-green-100 text-green-800 text-sm px-2 py-1 rounded-full">0</span>
+                    </h3>
+                </div>
+                <div id="completedColumn" class="p-4 space-y-3 min-h-96 drop-zone" data-status="completed">
+                    <!-- Tasks will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Modal -->
+    <div id="taskModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modalTitle" class="text-lg font-medium text-gray-900">タスクを追加</h3>
+                    <button id="closeModal" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <form id="taskForm" class="space-y-4">
+                    <div>
+                        <label for="taskTitle" class="block text-sm font-medium text-gray-700 mb-1">タスク名</label>
+                        <input type="text" id="taskTitle" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               placeholder="タスク名を入力">
+                    </div>
+                    
+                    <div>
+                        <label for="taskDescription" class="block text-sm font-medium text-gray-700 mb-1">説明</label>
+                        <textarea id="taskDescription" rows="3"
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                  placeholder="説明を入力（任意）"></textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="taskPriority" class="block text-sm font-medium text-gray-700 mb-1">優先度</label>
+                            <select id="taskPriority" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="low">低</option>
+                                <option value="medium" selected>中</option>
+                                <option value="high">高</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="taskStatus" class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+                            <select id="taskStatus" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="todo" selected>やること</option>
+                                <option value="in_progress">進行中</option>
+                                <option value="completed">完了</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="taskDueDate" class="block text-sm font-medium text-gray-700 mb-1">期限</label>
+                        <input type="date" id="taskDueDate"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    
+                    <div class="flex justify-end space-x-3 pt-4">
+                        <button type="button" id="cancelBtn" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                            キャンセル
+                        </button>
+                        <button type="submit" id="saveBtn" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                            保存
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notificationContainer" class="notification"></div>
+
+    <!-- JavaScript -->
+    <script src="js/app.js"></script>
+</body>
+</html>

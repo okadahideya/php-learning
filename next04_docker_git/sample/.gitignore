@@ -1,0 +1,168 @@
+# ===== PHP学習Docker環境用 .gitignore =====
+
+# ===== 環境設定ファイル =====
+.env
+.env.local
+.env.production
+docker-compose.override.yml
+
+# ===== ログファイル =====
+*.log
+logs/
+storage/logs/
+var/logs/
+
+# ===== キャッシュ・一時ファイル =====
+cache/
+tmp/
+temp/
+storage/framework/cache/
+storage/framework/sessions/
+storage/framework/views/
+
+# ===== アップロードファイル =====
+storage/app/public/uploads/
+public/uploads/
+public/storage
+
+# ===== Composer =====
+/vendor/
+composer.lock
+composer.phar
+
+# ===== Node.js =====
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ===== ビルド成果物 =====
+/public/build/
+/public/hot
+/public/js/
+/public/css/
+/public/mix-manifest.json
+dist/
+build/
+
+# ===== IDE・エディタ =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===== Docker関連 =====
+# Dockerのボリュームデータ
+/docker/mysql/data/
+/docker/redis/data/
+/volumes/
+
+# ===== バックアップ =====
+backups/
+*.sql
+*.backup
+*.dump
+
+# ===== テスト =====
+/coverage/
+.phpunit.result.cache
+phpunit.xml
+
+# ===== 開発ツール =====
+# Xdebugプロファイル
+xdebug/
+*.cachegrind
+
+# PHPStan
+.phpstan.cache
+
+# Psalm
+.psalm/
+
+# ===== OS固有 =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+
+# Windows
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# ===== セキュリティ =====
+# 秘密鍵・証明書
+*.key
+*.pem
+*.p12
+*.pfx
+config/ssl/
+
+# パスワード・シークレット
+secrets.json
+credentials.json
+
+# ===== プロダクション専用 =====
+# プロダクション用設定
+docker-compose.production.yml
+k8s/
+kubernetes/
+
+# SSL証明書
+ssl/
+certificates/
+
+# ===== 学習・テスト用 =====
+# 個人的なメモ・ノート
+notes.md
+memo.txt
+sandbox/
+experiments/
+playground/
+
+# サンプルデータ（大容量）
+sample_data.sql
+test_images/
+dummy_files/
+
+# ===== 依存関係・パッケージマネージャ =====
+# Yarn PnP
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ===== その他 =====
+# 設定ファイルのバックアップ
+*.bak
+*.backup
+*.old
+*.orig
+
+# 圧縮ファイル
+*.zip
+*.tar.gz
+*.rar
+*.7z
+
+# ドキュメント生成
+docs/build/
+documentation/build/
